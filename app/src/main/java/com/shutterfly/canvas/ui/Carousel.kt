@@ -23,7 +23,8 @@ private val thumbnailSize = 150.dp
 fun Carousel(
     modifier: Modifier = Modifier,
     thumbnails: List<CarouselImage>,
-    onCheckboxClick: CarouselImageCallback
+    onCheckboxClick: CarouselImageCallback,
+    onImageClick: CarouselImageCallback
 ) {
     if (thumbnails.isEmpty()) {
         Text(
@@ -45,7 +46,8 @@ fun Carousel(
                         .padding(horizontal = cellGap)
                         .size(thumbnailSize),
                     thumbnail = thumbnails[index],
-                    onCheckboxClick = onCheckboxClick
+                    onCheckboxClick = onCheckboxClick,
+                    onImageClick = onImageClick
                 )
             }
         }
@@ -61,6 +63,6 @@ private fun CanvasScreenPreview() {
     )
 
     ShutterflyCanvasTheme {
-        Carousel(thumbnails = thumbnails, onCheckboxClick = {})
+        Carousel(thumbnails = thumbnails, onCheckboxClick = {}, onImageClick = {})
     }
 }

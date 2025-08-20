@@ -20,6 +20,7 @@ import com.shutterfly.canvas.view.CanvasViewModel
 fun CanvasScreen(modifier: Modifier = Modifier) {
     val viewModel = viewModel { CanvasViewModel() }
     val thumbnails by viewModel.carouselImages.collectAsState()
+    val images by viewModel.canvasImages.collectAsState()
 
     Column(
         modifier = modifier
@@ -34,12 +35,13 @@ fun CanvasScreen(modifier: Modifier = Modifier) {
                 .weight(weight = 1f),
             contentAlignment = Alignment.Center
         ) {
-            Canvas()
+            Canvas(images = images)
         }
         Carousel(
             modifier = Modifier.padding(top = 8.dp, bottom = 4.dp),
             thumbnails = thumbnails,
-            onCheckboxClick = viewModel::onCarouselCheckboxClick
+            onCheckboxClick = viewModel::onCarouselCheckboxClick,
+            onImageClick = viewModel::onCarouselImageClick
         )
     }
 }

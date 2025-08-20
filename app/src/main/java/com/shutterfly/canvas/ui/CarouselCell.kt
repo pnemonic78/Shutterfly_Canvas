@@ -2,16 +2,13 @@ package com.shutterfly.canvas.ui
 
 import android.content.Context
 import android.net.Uri
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
@@ -33,19 +30,23 @@ private val checkboxSize = 48.dp
 fun CarouselCell(
     modifier: Modifier = Modifier,
     thumbnail: CarouselImage,
-    onCheckboxClick: CarouselImageCallback
+    onCheckboxClick: CarouselImageCallback,
+    onImageClick: CarouselImageCallback
 ) {
     val context: Context = LocalContext.current
-    var selected by remember { mutableStateOf(thumbnail.selected) }
 
     Box(
         modifier = modifier
             .clip(MaterialTheme.shapes.medium)
     ) {
         AsyncImage(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .clickable {
+                    onImageClick(thumbnail)
+                },
             model = ImageRequest.Builder(context)
-                .data(thumbnail.image)
+                .data(thumbnail.source)
                 .build(),
             placeholder = painterResource(R.drawable.image),
             contentDescription = thumbnail.toString(),
@@ -53,10 +54,8 @@ fun CarouselCell(
         )
         Checkbox(
             modifier = Modifier.size(checkboxSize),
-            checked = selected,
+            checked = thumbnail.selected,
             onCheckedChange = {
-                selected = !selected
-                thumbnail.selected = selected
                 onCheckboxClick(thumbnail)
             }
         )
@@ -74,6 +73,9 @@ private fun CanvasScreenPreview() {
             thumbnail = thumbnail,
             onCheckboxClick = {
                 println("checkbox clicked $it")
+            },
+            onImageClick = {
+                println("image clicked $it")
             }
         )
     }

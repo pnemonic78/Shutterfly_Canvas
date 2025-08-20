@@ -33,8 +33,35 @@ class CanvasViewModel : ViewModel() {
     }
 
     fun onCarouselCheckboxClick(thumbnail: CarouselImage) {
-        // Cell already updated itself.
-        carouselImagesSelected = _carouselImages.value.filter { it.selected }
+        var thumbnails = _carouselImages.value
+        val index = thumbnails.indexOf(thumbnail)
+        if (index < 0) return
+
+        viewModelScope.launch {
+            val thumbnailNew = thumbnail.copy(selected = !thumbnail.selected)
+            val thumbnailsNew = thumbnails.subList(0, index) +
+                    thumbnailNew +
+                    thumbnails.subList(index + 1, thumbnails.size)
+            _carouselImages.emit(thumbnailsNew)
+            carouselImagesSelected = _carouselImages.value.filter { it.selected }
+        }
+    }
+
+    fun onCarouselImageClick(thumbnail: CarouselImage) {
+        val selection = carouselImagesSelected
+        if (selection.isEmpty()) return
+        val imagesAdded = _canvasImages.value
+        val imagesToAdd = selection.map { CanvasImage(it.source) }
+        val imagesNew = imagesAdded + imagesToAdd
+        val thumbnails = _carouselImages.value
+
+        viewModelScope.launch {
+            // Add the selected images to the canvas.
+            _canvasImages.emit(imagesNew)
+            // Reset selected carousel images.
+            _carouselImages.emit(thumbnails.map { it.copy(selected = false) })
+            carouselImagesSelected = emptyList<CarouselImage>()
+        }
     }
 
     companion object {

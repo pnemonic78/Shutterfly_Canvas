@@ -13,10 +13,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.shutterfly.canvas.model.CanvasImage
 import com.shutterfly.canvas.ui.theme.ShutterflyCanvasTheme
 
 @Composable
-fun Canvas(modifier: Modifier = Modifier) {
+fun Canvas(modifier: Modifier = Modifier, images: List<CanvasImage> = emptyList()) {
     Box(
         modifier = modifier
             .padding(8.dp)
@@ -25,13 +26,17 @@ fun Canvas(modifier: Modifier = Modifier) {
             .background(color = Color.White)
             .border(width = 2.dp, color = Color.DarkGray, shape = MaterialTheme.shapes.small)
             .clip(MaterialTheme.shapes.small)
-    )
+    ) {
+        images.forEach {
+            CanvasImageBox(it)
+        }
+    }
 }
 
 @Preview(showBackground = true)
 @Composable
 private fun CanvasScreenPreview() {
     ShutterflyCanvasTheme {
-        Canvas()
+        Canvas(images = emptyList<CanvasImage>())
     }
 }
