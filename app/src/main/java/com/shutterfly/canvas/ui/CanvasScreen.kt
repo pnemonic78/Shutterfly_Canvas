@@ -35,7 +35,7 @@ fun CanvasScreen(modifier: Modifier = Modifier) {
                 .weight(weight = 1f),
             contentAlignment = Alignment.Center
         ) {
-            Canvas(images = images)
+            Canvas(images = images, onImageChange = viewModel::onCanvasImageChange)
         }
         Carousel(
             modifier = Modifier.padding(top = 8.dp, bottom = 4.dp),

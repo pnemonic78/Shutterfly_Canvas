@@ -1,5 +1,7 @@
 package com.shutterfly.canvas.view
 
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -62,6 +64,11 @@ class CanvasViewModel : ViewModel() {
             _carouselImages.emit(thumbnails.map { it.copy(selected = false) })
             carouselImagesSelected = emptyList<CarouselImage>()
         }
+    }
+
+    fun onCanvasImageChange(image: CanvasImage, offset: Offset, size: Size) {
+        image.offset = offset
+        image.size = size
     }
 
     companion object {

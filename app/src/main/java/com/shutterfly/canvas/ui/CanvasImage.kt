@@ -1,16 +1,19 @@
 package com.shutterfly.canvas.ui
 
 import android.content.Context
-import androidx.compose.foundation.gestures.detectDragGestures
-import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.gestures.rememberTransformableState
+import androidx.compose.foundation.gestures.transformable
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -20,35 +23,40 @@ import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import com.shutterfly.canvas.R
 import com.shutterfly.canvas.model.CanvasImage
+import kotlin.math.max
+import kotlin.math.min
+
+typealias OnCanvasImageChange = (CanvasImage, Offset, Size) -> Unit
 
 @Composable
-fun CanvasImageBox(image: CanvasImage) {
+fun CanvasImageBox(image: CanvasImage, onImageChange: OnCanvasImageChange) {
     val context: Context = LocalContext.current
     var offsetPx by remember { mutableStateOf(image.offset) }
     var sizePx by remember { mutableStateOf(image.size) }
+    var scale by remember { mutableFloatStateOf(1f) }
+    val state = rememberTransformableState { zoomChange, panChange, _ ->
+        scale = min(max(scale * zoomChange, 0.1f), 10f)
+        offsetPx += panChange
+        onImageChange(image, offsetPx, sizePx)
+    }
 
-    var x = 0.dp
-    var y = 0.dp
     var w = 0.dp
     var h = 0.dp
-
     with(LocalDensity.current) {
-        x = offsetPx.x.toDp()
-        y = offsetPx.y.toDp()
         w = sizePx.width.toDp()
         h = sizePx.height.toDp()
     }
 
     AsyncImage(
         modifier = Modifier
-            .offset(x, y)
             .size(w, h)
-            .pointerInput(Unit) {
-                detectDragGestures { change, dragAmount ->
-                    offsetPx =
-                        offsetPx.copy(x = offsetPx.x + dragAmount.x, y = offsetPx.y + dragAmount.y)
-                }
-            },
+            .graphicsLayer {
+                scaleX = scale
+                scaleY = scale
+                translationX = offsetPx.x
+                translationY = offsetPx.y
+            }
+            .transformable(state = state),
         model = ImageRequest.Builder(context)
             .data(image.source)
             .build(),
@@ -56,7 +64,8 @@ fun CanvasImageBox(image: CanvasImage) {
         contentDescription = image.toString(),
         contentScale = ContentScale.Fit,
         onSuccess = { state ->
-            sizePx = state.painter.intrinsicSize / 2F
+            sizePx = state.painter.intrinsicSize / 2f
+            onImageChange(image, offsetPx, sizePx)
         }
     )
 }

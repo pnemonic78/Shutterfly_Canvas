@@ -17,7 +17,11 @@ import com.shutterfly.canvas.model.CanvasImage
 import com.shutterfly.canvas.ui.theme.ShutterflyCanvasTheme
 
 @Composable
-fun Canvas(modifier: Modifier = Modifier, images: List<CanvasImage> = emptyList()) {
+fun Canvas(
+    modifier: Modifier = Modifier,
+    images: List<CanvasImage> = emptyList(),
+    onImageChange: OnCanvasImageChange
+) {
     Box(
         modifier = modifier
             .padding(8.dp)
@@ -28,7 +32,7 @@ fun Canvas(modifier: Modifier = Modifier, images: List<CanvasImage> = emptyList(
             .clip(MaterialTheme.shapes.small)
     ) {
         images.forEach {
-            CanvasImageBox(it)
+            CanvasImageBox(it, onImageChange)
         }
     }
 }
@@ -37,6 +41,6 @@ fun Canvas(modifier: Modifier = Modifier, images: List<CanvasImage> = emptyList(
 @Composable
 private fun CanvasScreenPreview() {
     ShutterflyCanvasTheme {
-        Canvas(images = emptyList<CanvasImage>())
+        Canvas(images = emptyList<CanvasImage>(), onImageChange = { i, o, s -> })
     }
 }
