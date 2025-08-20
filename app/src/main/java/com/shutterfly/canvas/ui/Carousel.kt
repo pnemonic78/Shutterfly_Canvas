@@ -1,7 +1,6 @@
 package com.shutterfly.canvas.ui
 
 import android.net.Uri
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -11,7 +10,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -34,9 +32,7 @@ fun Carousel(modifier: Modifier = Modifier, thumbnails: List<Uri>) {
         )
     } else {
         LazyRow(
-            modifier = modifier
-                .fillMaxWidth()
-                .background(color = Color.Magenta)
+            modifier = modifier.fillMaxWidth()
         ) {
             items(count = thumbnails.size) { index ->
                 CarouselCell(
@@ -53,7 +49,7 @@ fun Carousel(modifier: Modifier = Modifier, thumbnails: List<Uri>) {
 @Preview(showBackground = true)
 @Composable
 private fun CanvasScreenPreview() {
-    val thumbnails = emptyList<Uri>()
+    val thumbnails = listOf<Uri>(Uri.EMPTY, Uri.EMPTY, Uri.EMPTY)
 
     ShutterflyCanvasTheme {
         Carousel(thumbnails = thumbnails)
