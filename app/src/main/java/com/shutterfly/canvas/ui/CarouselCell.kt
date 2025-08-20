@@ -22,14 +22,21 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import com.shutterfly.canvas.R
+import com.shutterfly.canvas.model.CarouselImage
 import com.shutterfly.canvas.ui.theme.ShutterflyCanvasTheme
+
+typealias CarouselImageCallback = (CarouselImage) -> Unit
 
 private val checkboxSize = 48.dp
 
 @Composable
-fun CarouselCell(modifier: Modifier = Modifier, thumbnail: Uri) {
+fun CarouselCell(
+    modifier: Modifier = Modifier,
+    thumbnail: CarouselImage,
+    onCheckboxClick: CarouselImageCallback
+) {
     val context: Context = LocalContext.current
-    var selected by remember { mutableStateOf(false) }
+    var selected by remember { mutableStateOf(thumbnail.selected) }
 
     Box(
         modifier = modifier
@@ -38,7 +45,7 @@ fun CarouselCell(modifier: Modifier = Modifier, thumbnail: Uri) {
         AsyncImage(
             modifier = Modifier.fillMaxSize(),
             model = ImageRequest.Builder(context)
-                .data(thumbnail)
+                .data(thumbnail.image)
                 .build(),
             placeholder = painterResource(R.drawable.image),
             contentDescription = thumbnail.toString(),
@@ -49,6 +56,8 @@ fun CarouselCell(modifier: Modifier = Modifier, thumbnail: Uri) {
             checked = selected,
             onCheckedChange = {
                 selected = !selected
+                thumbnail.selected = selected
+                onCheckboxClick(thumbnail)
             }
         )
     }
@@ -57,7 +66,15 @@ fun CarouselCell(modifier: Modifier = Modifier, thumbnail: Uri) {
 @Preview(showBackground = true)
 @Composable
 private fun CanvasScreenPreview() {
+    val thumbnail = CarouselImage(Uri.EMPTY)
+
     ShutterflyCanvasTheme {
-        CarouselCell(modifier = Modifier.size(200.dp), thumbnail = Uri.EMPTY)
+        CarouselCell(
+            modifier = Modifier.size(200.dp),
+            thumbnail = thumbnail,
+            onCheckboxClick = {
+                println("checkbox clicked $it")
+            }
+        )
     }
 }

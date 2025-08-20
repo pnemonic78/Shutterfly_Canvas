@@ -13,13 +13,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.shutterfly.canvas.model.CarouselImage
 import com.shutterfly.canvas.ui.theme.ShutterflyCanvasTheme
 
 private val cellGap = 4.dp
 private val thumbnailSize = 150.dp
 
 @Composable
-fun Carousel(modifier: Modifier = Modifier, thumbnails: List<Uri>) {
+fun Carousel(
+    modifier: Modifier = Modifier,
+    thumbnails: List<CarouselImage>,
+    onCheckboxClick: CarouselImageCallback
+) {
     if (thumbnails.isEmpty()) {
         Text(
             modifier = Modifier
@@ -39,7 +44,8 @@ fun Carousel(modifier: Modifier = Modifier, thumbnails: List<Uri>) {
                     modifier = Modifier
                         .padding(horizontal = cellGap)
                         .size(thumbnailSize),
-                    thumbnail = thumbnails[index]
+                    thumbnail = thumbnails[index],
+                    onCheckboxClick = onCheckboxClick
                 )
             }
         }
@@ -49,9 +55,12 @@ fun Carousel(modifier: Modifier = Modifier, thumbnails: List<Uri>) {
 @Preview(showBackground = true)
 @Composable
 private fun CanvasScreenPreview() {
-    val thumbnails = listOf<Uri>(Uri.EMPTY, Uri.EMPTY, Uri.EMPTY)
+    val thumbnails = listOf<CarouselImage>(
+        CarouselImage(Uri.EMPTY),
+        CarouselImage(Uri.EMPTY, selected = true)
+    )
 
     ShutterflyCanvasTheme {
-        Carousel(thumbnails = thumbnails)
+        Carousel(thumbnails = thumbnails, onCheckboxClick = {})
     }
 }

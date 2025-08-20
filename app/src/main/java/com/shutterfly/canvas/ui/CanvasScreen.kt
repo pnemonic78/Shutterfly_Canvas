@@ -19,7 +19,7 @@ import com.shutterfly.canvas.view.CanvasViewModel
 @Composable
 fun CanvasScreen(modifier: Modifier = Modifier) {
     val viewModel = viewModel { CanvasViewModel() }
-    val thumbnails by viewModel.gallery.collectAsState()
+    val thumbnails by viewModel.carouselImages.collectAsState()
 
     Column(
         modifier = modifier
@@ -38,7 +38,8 @@ fun CanvasScreen(modifier: Modifier = Modifier) {
         }
         Carousel(
             modifier = Modifier.padding(top = 8.dp, bottom = 4.dp),
-            thumbnails = thumbnails
+            thumbnails = thumbnails,
+            onCheckboxClick = viewModel::onCarouselCheckboxClick
         )
     }
 }
