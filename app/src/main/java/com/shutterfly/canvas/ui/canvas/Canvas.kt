@@ -1,4 +1,4 @@
-package com.shutterfly.canvas.ui
+package com.shutterfly.canvas.ui.canvas
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -20,15 +20,18 @@ import com.shutterfly.canvas.ui.theme.ShutterflyCanvasTheme
 fun Canvas(
     modifier: Modifier = Modifier,
     images: List<CanvasImage> = emptyList(),
+    isDragging: Boolean = false,
     onImageChange: OnCanvasImageChange
 ) {
+    val bgColor = if (isDragging) Color.LightGray else Color.White
+    val borderColor = if (isDragging) Color.Green else Color.DarkGray
+
     Box(
         modifier = modifier
             .padding(8.dp)
-            .fillMaxSize()
             .aspectRatio(1f)
-            .background(color = Color.White)
-            .border(width = 2.dp, color = Color.DarkGray, shape = MaterialTheme.shapes.small)
+            .background(color = bgColor)
+            .border(width = 2.dp, color = borderColor, shape = MaterialTheme.shapes.small)
             .clip(MaterialTheme.shapes.small)
     ) {
         images.forEach {
@@ -41,6 +44,9 @@ fun Canvas(
 @Composable
 private fun CanvasScreenPreview() {
     ShutterflyCanvasTheme {
-        Canvas(images = emptyList<CanvasImage>(), onImageChange = { i, o, s -> })
+        Canvas(
+            images = emptyList<CanvasImage>(),
+            onImageChange = { i, o, s -> }
+        )
     }
 }

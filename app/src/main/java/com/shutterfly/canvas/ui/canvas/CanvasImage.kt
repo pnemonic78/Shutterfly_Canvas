@@ -1,4 +1,4 @@
-package com.shutterfly.canvas.ui
+package com.shutterfly.canvas.ui.canvas
 
 import android.content.Context
 import androidx.compose.foundation.gestures.rememberTransformableState
@@ -18,7 +18,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import com.shutterfly.canvas.R
@@ -40,16 +39,11 @@ fun CanvasImageBox(image: CanvasImage, onImageChange: OnCanvasImageChange) {
         onImageChange(image, offsetPx, sizePx)
     }
 
-    var w = 0.dp
-    var h = 0.dp
-    with(LocalDensity.current) {
-        w = sizePx.width.toDp()
-        h = sizePx.height.toDp()
-    }
+    val sizeDp = with(LocalDensity.current) { sizePx.toDpSize() }
 
     AsyncImage(
         modifier = Modifier
-            .size(w, h)
+            .size(sizeDp)
             .graphicsLayer {
                 scaleX = scale
                 scaleY = scale

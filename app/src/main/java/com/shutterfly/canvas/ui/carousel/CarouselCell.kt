@@ -1,8 +1,7 @@
-package com.shutterfly.canvas.ui
+package com.shutterfly.canvas.ui.carousel
 
 import android.content.Context
 import android.net.Uri
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
@@ -12,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -20,6 +20,7 @@ import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import com.shutterfly.canvas.R
 import com.shutterfly.canvas.model.CarouselImage
+import com.shutterfly.canvas.ui.drag.DragSource
 import com.shutterfly.canvas.ui.theme.ShutterflyCanvasTheme
 
 typealias CarouselImageCallback = (CarouselImage) -> Unit
@@ -30,28 +31,28 @@ private val checkboxSize = 48.dp
 fun CarouselCell(
     modifier: Modifier = Modifier,
     thumbnail: CarouselImage,
-    onCheckboxClick: CarouselImageCallback,
-    onImageClick: CarouselImageCallback
+    onCheckboxClick: CarouselImageCallback
 ) {
     val context: Context = LocalContext.current
 
     Box(
         modifier = modifier
             .clip(MaterialTheme.shapes.medium)
+            .onSizeChanged { size ->
+                thumbnail.size = size
+            }
     ) {
-        AsyncImage(
-            modifier = Modifier
-                .fillMaxSize()
-                .clickable {
-                    onImageClick(thumbnail)
-                },
-            model = ImageRequest.Builder(context)
-                .data(thumbnail.source)
-                .build(),
-            placeholder = painterResource(R.drawable.image),
-            contentDescription = thumbnail.toString(),
-            contentScale = ContentScale.Crop
-        )
+        DragSource(modifier = Modifier.fillMaxSize(), data = thumbnail) {
+            AsyncImage(
+                modifier = Modifier.fillMaxSize(),
+                model = ImageRequest.Builder(context)
+                    .data(thumbnail.source)
+                    .build(),
+                placeholder = painterResource(R.drawable.image),
+                contentDescription = thumbnail.toString(),
+                contentScale = ContentScale.Crop
+            )
+        }
         Checkbox(
             modifier = Modifier.size(checkboxSize),
             checked = thumbnail.selected,
@@ -73,9 +74,6 @@ private fun CanvasScreenPreview() {
             thumbnail = thumbnail,
             onCheckboxClick = {
                 println("checkbox clicked $it")
-            },
-            onImageClick = {
-                println("image clicked $it")
             }
         )
     }

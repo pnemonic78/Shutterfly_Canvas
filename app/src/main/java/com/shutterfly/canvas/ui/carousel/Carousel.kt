@@ -1,4 +1,4 @@
-package com.shutterfly.canvas.ui
+package com.shutterfly.canvas.ui.carousel
 
 import android.net.Uri
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,8 +23,7 @@ private val thumbnailSize = 150.dp
 fun Carousel(
     modifier: Modifier = Modifier,
     thumbnails: List<CarouselImage>,
-    onCheckboxClick: CarouselImageCallback,
-    onImageClick: CarouselImageCallback
+    onCheckboxClick: CarouselImageCallback
 ) {
     if (thumbnails.isEmpty()) {
         Text(
@@ -46,8 +45,7 @@ fun Carousel(
                         .padding(horizontal = cellGap)
                         .size(thumbnailSize),
                     thumbnail = thumbnails[index],
-                    onCheckboxClick = onCheckboxClick,
-                    onImageClick = onImageClick
+                    onCheckboxClick = onCheckboxClick
                 )
             }
         }
@@ -63,6 +61,6 @@ private fun CanvasScreenPreview() {
     )
 
     ShutterflyCanvasTheme {
-        Carousel(thumbnails = thumbnails, onCheckboxClick = {}, onImageClick = {})
+        Carousel(thumbnails = thumbnails, onCheckboxClick = {})
     }
 }
